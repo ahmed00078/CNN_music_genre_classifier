@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import librosa
 import pandas as pd
 
-from cnn_model import create_audio_cnn_model
+from cnn_model import create_improved_audio_cnn_model
 
 def extract_melspectrogram(file_path, max_pad_len=174):
     """
@@ -107,7 +107,7 @@ def train_audio_classifier(data_path, genres, output_model_path):
     )
     
     # Create the model
-    model = create_audio_cnn_model(
+    model = create_improved_audio_cnn_model(
         input_shape=(X_train.shape[1], X_train.shape[2], 1), 
         num_classes=len(genres)
     )
@@ -131,7 +131,7 @@ def train_audio_classifier(data_path, genres, output_model_path):
     history = model.fit(
         X_train, y_train,
         validation_split=0.2,
-        epochs=50,
+        epochs=5,
         batch_size=32,
         callbacks=[checkpoint, early_stop]
     )
@@ -145,13 +145,18 @@ def train_audio_classifier(data_path, genres, output_model_path):
 
     try:
         # Save the model
+        print(f"Saving model to: {output_model_path}")
         model.save(output_model_path)
+        # Verify the model file
+        assert os.path.exists(output_model_path)
+        print("Model saved successfully")
     except Exception as e:
         print(f"Error saving model: {e}")
     
     # Evaluate the model
     test_loss, test_accuracy = model.evaluate(X_test, y_test)
     print(f"Test Accuracy: {test_accuracy * 100:.2f}%")
+    print(f"Test Loss: {test_loss}")
     
     return history
 
@@ -163,7 +168,7 @@ if __name__ == "__main__":
     
     # Paths
     # data_path = 'data/genres_original'
-    output_model_path = '../../models/best_model.h5'
+    output_model_path = 'C:/Users/hp/OneDrive - Ministere de l\'Enseignement Superieur et de la Recherche Scientifique/Desktop/Ensit-Info/S5/ML/mini projet/music_genre_classifier/models/best_model.keras'
     
     data_path = "C:/Users/hp/OneDrive - Ministere de l'Enseignement Superieur et de la Recherche Scientifique/Desktop/Ensit-Info/S5/ML/mini projet/music_genre_classifier/data/genres_original"
     
