@@ -65,4 +65,6 @@ def create_improved_audio_cnn_model(input_shape, num_classes=10):
         metrics=['accuracy']
     )
 
+    model.summary()
+
     return model
