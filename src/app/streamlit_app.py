@@ -7,7 +7,7 @@ import tempfile
 import os
 
 # Import the prediction module
-from ..api.prediction import AudioClassifier
+from prediction import AudioClassifier
 
 def plot_mel_spectrogram(audio_path):
     """
@@ -59,7 +59,7 @@ def main():
     # Load the model
     try:
         classifier = AudioClassifier(
-            model_path='models/genre_classifier.h5', 
+            model_path='../../models/best_model.keras', 
             genres=genres
         )
     except Exception as e:
