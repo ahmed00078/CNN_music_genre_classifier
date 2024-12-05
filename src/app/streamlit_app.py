@@ -7,7 +7,7 @@ import tempfile
 import os
 
 # Import the prediction module
-from src.api.prediction import AudioClassifier
+from ..api.prediction import AudioClassifier
 
 def plot_mel_spectrogram(audio_path):
     """

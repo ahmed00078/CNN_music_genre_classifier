@@ -117,7 +117,8 @@ def train_audio_classifier(data_path, genres, output_model_path):
         output_model_path, 
         monitor='val_accuracy', 
         save_best_only=True, 
-        mode='max'
+        mode='max',
+        verbose=1
     )
     
     early_stop = EarlyStopping(
@@ -134,6 +135,19 @@ def train_audio_classifier(data_path, genres, output_model_path):
         batch_size=32,
         callbacks=[checkpoint, early_stop]
     )
+    try:
+        # Save the training history
+        history_df = pd.DataFrame(history.history)
+        history_path = output_model_path.replace('.h5', '_history.csv')
+        history_df.to_csv(history_path, index=False)
+    except Exception as e:
+        print(f"Error saving training history: {e}")
+
+    try:
+        # Save the model
+        model.save(output_model_path)
+    except Exception as e:
+        print(f"Error saving model: {e}")
     
     # Evaluate the model
     test_loss, test_accuracy = model.evaluate(X_test, y_test)
@@ -149,7 +163,7 @@ if __name__ == "__main__":
     
     # Paths
     # data_path = 'data/genres_original'
-    output_model_path = '../../models'
+    output_model_path = '../../models/best_model.h5'
     
     data_path = "C:/Users/hp/OneDrive - Ministere de l'Enseignement Superieur et de la Recherche Scientifique/Desktop/Ensit-Info/S5/ML/mini projet/music_genre_classifier/data/genres_original"
     
