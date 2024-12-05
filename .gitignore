@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual Environment
+venv/
+env/
+.env/
+
+# Audio Datasets
+data/
+*.wav
+*.mp3
+*.ogg
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Logs and Databases
+*.log
+*.sqlite
+
+# Streamlit
+.streamlit/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
