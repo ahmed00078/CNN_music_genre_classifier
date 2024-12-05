@@ -131,14 +131,14 @@ def train_audio_classifier(data_path, genres, output_model_path):
     history = model.fit(
         X_train, y_train,
         validation_split=0.2,
-        epochs=50,
+        epochs=2,
         batch_size=32,
         callbacks=[checkpoint, early_stop]
     )
     try:
         # Save the training history
         history_df = pd.DataFrame(history.history)
-        history_path = output_model_path.replace('.h5', '_history.csv')
+        history_path = output_model_path.replace('.keras', '_history.csv')
         history_df.to_csv(history_path, index=False)
     except Exception as e:
         print(f"Error saving training history: {e}")
