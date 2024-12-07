@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import librosa
 import pandas as pd
 
-from cnn_model import create_improved_audio_cnn_model
+from cnn_model import create_optimized_audio_cnn
 
 def extract_melspectrogram(file_path, max_pad_len=174):
     """
@@ -35,6 +35,11 @@ def extract_melspectrogram(file_path, max_pad_len=174):
         
         # Convert to log scale (dB)
         mel_spec_db = librosa.power_to_db(mel_spec, ref=np.max)
+
+        # Normalize between -1, 1
+        print("np.mean(mel_spec_db) before: ", np.mean(mel_spec_db))
+        mel_spec_db = (mel_spec_db - np.mean(mel_spec_db)) / np.std(mel_spec_db)
+        print("np.mean(mel_spec_db) after : ", np.mean(mel_spec_db))
         
         # Pad or truncate
         if mel_spec_db.shape[1] > max_pad_len:
@@ -107,7 +112,7 @@ def train_audio_classifier(data_path, genres, output_model_path):
     )
     
     # Create the model
-    model = create_improved_audio_cnn_model(
+    model = create_optimized_audio_cnn(
         input_shape=(X_train.shape[1], X_train.shape[2], 1), 
         num_classes=len(genres)
     )

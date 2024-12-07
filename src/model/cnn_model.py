@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models, regularizers
 
-def create_improved_audio_cnn_model(input_shape, num_classes=10):
+def create_optimized_audio_cnn(input_shape, num_classes=10):
     """
     Create an improved CNN model for audio genre classification
     

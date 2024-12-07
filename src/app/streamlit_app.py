@@ -5,10 +5,9 @@ import librosa.display
 import numpy as np
 import tempfile
 import os
+import requests
 
-# Import the prediction module
-from prediction import AudioClassifier
-
+# Function to plot mel-spectrogram
 def plot_mel_spectrogram(audio_path):
     """
     Plot mel-spectrogram of the input audio
@@ -52,19 +51,12 @@ def main():
     """
     st.title('🎵 Audio Genre Classifier')
     
-    # Initialize genres and model
+    # List of genres
     genres = ['blues', 'classical', 'country', 'disco', 'hiphop', 
               'jazz', 'metal', 'pop', 'reggae', 'rock']
     
-    # Load the model
-    try:
-        classifier = AudioClassifier(
-            model_path='../../models/best_model.keras', 
-            genres=genres
-        )
-    except Exception as e:
-        st.error(f"Error loading model: {e}")
-        st.stop()
+    # Flask API URL
+    api_url = 'http://127.0.0.1:5000/predict'  # Change this to your Flask API URL
     
     # File uploader
     uploaded_file = st.file_uploader(
@@ -83,35 +75,43 @@ def main():
             # Display audio player
             st.audio(uploaded_file, format='audio/wav')
             
-            # Predict genre
-            prediction = classifier.predict_genre(temp_file_path)
+            # Send the audio file to the Flask API for prediction
+            with open(temp_file_path, 'rb') as audio_file:
+                response = requests.post(api_url, files={'file': audio_file})
             
-            # Display prediction results
-            st.subheader("Prediction Results")
-            st.write(f"**Predicted Genre:** {prediction['genre']}")
-            st.write(f"**Confidence:** {prediction['confidence']*100:.2f}%")
-            
-            # Confidence bar chart
-            st.subheader("Genre Confidence Scores")
-            confidence_data = prediction['all_predictions']
-            
-            # Create a bar chart of confidence scores
-            fig, ax = plt.subplots(figsize=(10, 6))
-            genres = list(confidence_data.keys())
-            confidences = list(confidence_data.values())
-            
-            ax.bar(genres, [conf*100 for conf in confidences])
-            ax.set_ylabel('Confidence (%)')
-            ax.set_title('Genre Confidence Scores')
-            plt.xticks(rotation=45, ha='right')
-            plt.tight_layout()
-            
-            st.pyplot(fig)
-            
-            # Visualize Mel-spectrogram
-            st.subheader("Audio Mel-spectrogram")
-            mel_fig = plot_mel_spectrogram(temp_file_path)
-            st.pyplot(mel_fig)
+            # If the request was successful, parse and display results
+            if response.status_code == 200:
+                result = response.json()
+                # Display prediction results
+                st.subheader("Prediction Results")
+                st.write(f"**Predicted Genre:** {result['genre']}")
+                st.write(f"**Confidence:** {result['confidence']*100:.2f}%")
+                
+                # Confidence bar chart
+                st.subheader("Genre Confidence Scores")
+                confidence_data = result['all_predictions']
+                
+                # Create a bar chart of confidence scores
+                fig, ax = plt.subplots(figsize=(10, 6))
+                genres = list(confidence_data.keys())
+                confidences = list(confidence_data.values())
+
+                print("Genres:", genres, "Confidences:", confidences)
+                
+                ax.bar(genres, [conf*100 for conf in confidences])
+                ax.set_ylabel('Confidence (%)')
+                ax.set_title('Genre Confidence Scores')
+                plt.xticks(rotation=45, ha='right')
+                plt.tight_layout()
+                
+                st.pyplot(fig)
+                
+                # Visualize Mel-spectrogram
+                st.subheader("Audio Mel-spectrogram")
+                mel_fig = plot_mel_spectrogram(temp_file_path)
+                st.pyplot(mel_fig)
+            else:
+                st.error("Error processing the audio. Please try again.")
         
         except Exception as e:
             st.error(f"Error processing audio: {e}")
