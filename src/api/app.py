@@ -89,7 +89,7 @@ class AudioClassifier:
 # Initialize the classifier
 genres = ['blues', 'classical', 'country', 'disco', 'hiphop', 
           'jazz', 'metal', 'pop', 'reggae', 'rock']
-model_path = 'C:/Users/hp/OneDrive - Ministere de l\'Enseignement Superieur et de la Recherche Scientifique/Desktop/Ensit-Info/S5/ML/mini projet/music_genre_classifier/models/best_model.keras'  # Change this to your actual model path
+model_path = '/app/models/best_model.keras'  # Change this to your actual model path
 classifier = AudioClassifier(model_path=model_path, genres=genres)
 
 @app.route('/predict', methods=['POST'])

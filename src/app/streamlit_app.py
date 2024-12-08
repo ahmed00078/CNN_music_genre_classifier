@@ -56,7 +56,7 @@ def main():
               'jazz', 'metal', 'pop', 'reggae', 'rock']
     
     # Flask API URL
-    api_url = 'http://127.0.0.1:5000/predict'  # Change this to your Flask API URL
+    api_url = 'http://flask-api:5000/predict'  # Change this to your Flask API URL
     
     # File uploader
     uploaded_file = st.file_uploader(
