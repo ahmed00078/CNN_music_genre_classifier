@@ -6,7 +6,7 @@ This project implements an audio genre classification system using Convolutional
 ## Setup and Installation
 
 ### Prerequisites
-- Python 3.8+
+- Python 3.12+
 - pip (Python package manager)
 
 ### Installation Steps
