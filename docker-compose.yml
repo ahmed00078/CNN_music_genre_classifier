@@ -1,0 +1,33 @@
+services:
+  flask-api:
+    build:
+      context: ./src/api
+      dockerfile: Dockerfile
+    container_name: flask-api
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+    volumes:
+      - ./src/api:/app
+      - ./models:/app/models
+    environment:
+      - FLASK_ENV=development
+
+  streamlit-app:
+    build:
+      context: ./src/app
+      dockerfile: Dockerfile
+    container_name: streamlit-app
+    ports:
+      - "8501:8501"
+    networks:
+      - app-network
+    volumes:
+      - ./src/app:/app
+    depends_on:
+      - flask-api
+
+networks:
+  app-network:
+    driver: bridge
