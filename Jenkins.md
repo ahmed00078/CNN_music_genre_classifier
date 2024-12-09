@@ -4,8 +4,10 @@
 2. Run Jenkins:
    ```bash
    docker run -d --name jenkins -p 8080:8080 -p 50000:50000 \
-   -v jenkins_home:/var/jenkins_home \
-   jenkins/jenkins:lts
+    -v jenkins_home:/var/jenkins_home \
+    -v //var/run/docker.sock:/var/run/docker.sock \
+    --user root \
+    jenkins/jenkins:lts
    ```
    - This will start Jenkins on `http://localhost:8080`.
 

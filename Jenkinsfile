@@ -12,6 +12,14 @@ pipeline {
             }
         }
 
+        stage('Test if it works') {
+            steps {
+                script {
+                    sh 'echo "Hello, World!"'
+                }
+            }
+        }
+
         stage('Build Flask API') {
             steps {
                 script {
