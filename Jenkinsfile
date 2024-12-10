@@ -6,6 +6,26 @@ pipeline {
     }
 
     stages {
+
+        stage('Checkout Code') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[url: 'https://github.com/ahmed00078/CNN_music_genre_classifier']]
+                ])
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                script {
+                    sh 'git clone https://github.com/ahmed00078/CNN_music_genre_classifier .'
+                    sh 'ls -la'
+                }
+            }
+        }
+
         stage('Checkout Code') {
             steps {
                 checkout scm
