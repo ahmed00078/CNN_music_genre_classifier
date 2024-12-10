@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub') // Define DockerHub credentials in Jenkins
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub') // DockerHub credentials in Jenkins
     }
 
     stages {
@@ -17,21 +17,6 @@ pipeline {
             }
         }
 
-        stage('Clone Repository') {
-            steps {
-                script {
-                    sh 'git clone https://github.com/ahmed00078/CNN_music_genre_classifier .'
-                    sh 'ls -la'
-                }
-            }
-        }
-
-        stage('Checkout Code') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Test if it works') {
             steps {
                 script {
@@ -43,7 +28,13 @@ pipeline {
         stage('Build Flask API') {
             steps {
                 script {
-                    sh 'docker-compose build flask-api'
+                    sh '''
+                    if [ -f docker-compose.yml ]; then
+                        docker-compose build flask-api
+                    else
+                        echo "docker-compose.yml not found" && exit 1
+                    fi
+                    '''
                 }
             }
         }
@@ -51,7 +42,13 @@ pipeline {
         stage('Build Streamlit App') {
             steps {
                 script {
-                    sh 'docker-compose build streamlit-app'
+                    sh '''
+                    if [ -f docker-compose.yml ]; then
+                        docker-compose build streamlit-app
+                    else
+                        echo "docker-compose.yml not found" && exit 1
+                    fi
+                    '''
                 }
             }
         }
@@ -59,10 +56,15 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Adjust this if your project has tests
-                    sh 'docker-compose up -d flask-api'
-                    sh 'pytest tests/ --maxfail=1 --disable-warnings'
-                    sh 'docker-compose down'
+                    sh '''
+                    if [ -f docker-compose.yml ]; then
+                        docker-compose up -d flask-api
+                        pytest tests/ --maxfail=1 --disable-warnings
+                        docker-compose down
+                    else
+                        echo "docker-compose.yml not found" && exit 1
+                    fi
+                    '''
                 }
             }
         }
@@ -70,8 +72,10 @@ pipeline {
         stage('Push Docker Images to DockerHub') {
             steps {
                 script {
-                    sh 'docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW'
-                    sh 'docker-compose push'
+                    sh '''
+                    docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
+                    docker-compose push
+                    '''
                 }
             }
         }
@@ -80,7 +84,13 @@ pipeline {
     post {
         always {
             echo 'Pipeline finished execution.'
-            sh 'docker-compose down' // Ensure cleanup
+            script {
+                sh '''
+                if [ -f docker-compose.yml ]; then
+                    docker-compose down || true
+                fi
+                '''
+            }
         }
         success {
             echo 'Pipeline executed successfully.'
