@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt requirements.txt
 
 # Installer les dépendances
-RUN pip install --default-timeout=100 -r requirements.txt
+RUN pip install --default-timeout=100 --no-cache-dir -r requirements.txt
 
 # Copier tout le contenu du projet dans le conteneur
 COPY . .
