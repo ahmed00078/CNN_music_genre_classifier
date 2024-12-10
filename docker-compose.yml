@@ -4,6 +4,7 @@ services:
       context: ./src/api
       dockerfile: Dockerfile
     container_name: flask-api
+    image: ahmed20078/flask-api:latest
     ports:
       - "5000:5000"
     networks:
@@ -19,6 +20,7 @@ services:
       context: ./src/app
       dockerfile: Dockerfile
     container_name: streamlit-app
+    image: ahmed20078/streamlit-app:latest
     ports:
       - "8501:8501"
     networks:
