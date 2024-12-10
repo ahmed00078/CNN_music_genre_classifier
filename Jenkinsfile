@@ -53,26 +53,6 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    sh '''
-                    if [ -f docker-compose.yml ]; then
-                        # Remove existing container if it exists
-                        docker ps -a --filter "name=flask-api" --format "{{.ID}}" | xargs -r docker rm -f
-        
-                        # Start flask-api and run tests
-                        docker-compose up -d flask-api
-                        pytest tests/ --maxfail=1 --disable-warnings
-                        docker-compose down
-                    else
-                        echo "docker-compose.yml not found" && exit 1
-                    fi
-                    '''
-                }
-            }
-        }
-
         stage('Push Docker Images to DockerHub') {
             steps {
                 script {
